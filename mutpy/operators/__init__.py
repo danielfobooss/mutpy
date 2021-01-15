@@ -29,6 +29,7 @@ standard_operators = {
     LogicalOperatorReplacement,
     OverriddenMethodCallingPositionChange,
     OverridingMethodDeletion,
+    QuantumGateReplacement,
     RelationalOperatorReplacement,
     SliceIndexRemove,
     SuperCallingDeletion,
