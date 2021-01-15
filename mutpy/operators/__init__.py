@@ -6,6 +6,7 @@ from .inheritance import *
 from .logical import *
 from .loop import *
 from .misc import *
+from .qgates import * 
 
 SuperCallingInsert = utils.get_by_python_version([
     SuperCallingInsertPython27,

@@ -107,6 +107,10 @@ def build_mutator(cfg):
     else:
         operators_set |= operators.standard_operators
 
+    with open('results5.txt', 'w') as f:
+        f.write(str(operators_set))
+
+
     operators_set -= {get_operator(name, name_to_operator)
                       for name in cfg.disable_operator}
 
