@@ -13,8 +13,18 @@ class QuantumGateReplacement(MutationOperator):
 
     def mutate_Call(self, node):
         if isinstance(node.func, ast.Name):
-            print("NAME")
-            print(ast.dump(node))
+            print("Name: ", ast.dump(node))
+            if node.func.id in self.equivalent_gates():
+                print('Mutating quantum gate: ', node.func.id)
+                equiv_gates = self.equivalent_gates()[node.func.id]
+                equiv_gates.remove(node.func.id)
+                if equiv_gates is None: 
+                    return node
+
+                new_gate = random.choice(list(equiv_gates)) 
+                mutated_qgate = ast.Name(new_gate, node.func.ctx)
+                print("Mutated: ", ast.dump(ast.Call(mutated_qgate, node.args, node.keywords)))
+                return ast.Call(mutated_qgate, node.args, node.keywords)
 
         if isinstance(node.func, ast.Attribute):
             print("Attribute: ", ast.dump(node))  
@@ -22,7 +32,8 @@ class QuantumGateReplacement(MutationOperator):
                 print('Mutating quantum gate: ', node.func.attr)
                 equiv_gates = self.equivalent_gates()[node.func.attr]
                 equiv_gates.remove(node.func.attr)
-                if equiv_gates is None: return node
+                if equiv_gates is None: 
+                    return node
 
                 new_gate = random.choice(list(equiv_gates)) 
                 mutated_qgate = ast.Attribute(node.func.value, new_gate, node.func.ctx)
