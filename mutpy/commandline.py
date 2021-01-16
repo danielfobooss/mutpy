@@ -72,7 +72,6 @@ def build_controller(cfg):
     mutant_generator = build_mutator(cfg)
     target_loader = utils.ModulesLoader(cfg.target, cfg.path)
     test_loader = utils.ModulesLoader(cfg.unit_test, cfg.path)
-    qstrategy = get_qstrategy(cfg.qstrategy)
     return controller.MutationController(
         runner_cls=runner_cls,
         target_loader=target_loader,
@@ -84,15 +83,7 @@ def build_controller(cfg):
         disable_stdout=cfg.disable_stdout,
         mutate_covered=cfg.coverage,
         mutation_number=cfg.mutation_number,
-        
     )
-
-def get_qstrategy(qstrategy):
-    if qstrategy == 'random':
-        return qstrategy
-    elif qstrategy == 'all':
-        return qstrategy
-    raise ValueError('Unknown strategy: {0}'.format(qstrategy))
 
 
 def get_runner_cls(runner):
