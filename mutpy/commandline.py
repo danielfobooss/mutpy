@@ -48,6 +48,8 @@ def build_parser():
     parser.add_argument('--list-hom-strategies', action='store_true', help='list available HOM strategies')
     parser.add_argument('--mutation-number', type=int, metavar='MUTATION_NUMBER',
                         help='run only one mutation (debug purpose)')
+    parser.add_argument('--qstrategy',  type=str, choices=['random', 'all'], default='random', metavar='STRATEGY',
+                        help="'random' by default or 'all' equivalent gates mutation")
     return parser
 
 
@@ -70,17 +72,27 @@ def build_controller(cfg):
     mutant_generator = build_mutator(cfg)
     target_loader = utils.ModulesLoader(cfg.target, cfg.path)
     test_loader = utils.ModulesLoader(cfg.unit_test, cfg.path)
+    qstrategy = get_qstrategy(cfg.qstrategy)
     return controller.MutationController(
         runner_cls=runner_cls,
         target_loader=target_loader,
         test_loader=test_loader,
         views=built_views,
         mutant_generator=mutant_generator,
+        qstrategy=cfg.qstrategy,
         timeout_factor=cfg.timeout_factor,
         disable_stdout=cfg.disable_stdout,
         mutate_covered=cfg.coverage,
         mutation_number=cfg.mutation_number,
+        
     )
+
+def get_qstrategy(qstrategy):
+    if qstrategy == 'random':
+        return qstrategy
+    elif qstrategy == 'all':
+        return qstrategy
+    raise ValueError('Unknown strategy: {0}'.format(qstrategy))
 
 
 def get_runner_cls(runner):
@@ -106,10 +118,6 @@ def build_mutator(cfg):
                           for name in cfg.operator}
     else:
         operators_set |= operators.standard_operators
-
-    with open('results5.txt', 'w') as f:
-        f.write(str(operators_set))
-
 
     operators_set -= {get_operator(name, name_to_operator)
                       for name in cfg.disable_operator}

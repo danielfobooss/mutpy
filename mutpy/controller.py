@@ -48,7 +48,7 @@ class MutationScore:
 
 class MutationController(views.ViewNotifier):
 
-    def __init__(self, runner_cls, target_loader, test_loader, views, mutant_generator,
+    def __init__(self, runner_cls, target_loader, test_loader, views, mutant_generator, qstrategy,
                  timeout_factor=5, disable_stdout=False, mutate_covered=False, mutation_number=None):
         super().__init__(views)
         self.target_loader = target_loader
@@ -58,6 +58,7 @@ class MutationController(views.ViewNotifier):
         self.stdout_manager = utils.StdoutManager(disable_stdout)
         self.mutation_number = mutation_number
         self.runner = runner_cls(self.test_loader, self.timeout_factor, self.stdout_manager, mutate_covered)
+        self.qstrategy = qstrategy
 
     def run(self):
         self.notify_initialize(self.target_loader.names, self.test_loader.names)
