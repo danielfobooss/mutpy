@@ -31,6 +31,7 @@ standard_operators = {
     OverriddenMethodCallingPositionChange,
     OverridingMethodDeletion,
     QuantumGateReplacement,
+    QuantumMeasurementRemove,
     RelationalOperatorReplacement,
     SliceIndexRemove,
     SuperCallingDeletion,

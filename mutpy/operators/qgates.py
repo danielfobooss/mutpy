@@ -1,17 +1,10 @@
 import ast
 from inspect import getmembers, isfunction, signature
 from mutpy.operators.base import MutationResign, MutationOperator
-from qiskit import QuantumCircuit
-import random
 # https://qiskit.org/documentation/apidoc/circuit_library.html
 # https://github.com/Qiskit/qiskit-terra/blob/master/qiskit/circuit/quantumcircuit.py
 # https://quantumai.google/cirq/gates     
 
-gates_already_used = []
-
-
-"""     def get_gate_to_mutate(self, gates_list):
-        return gate_to_mutate """
 
 class QuantumGateReplacement(MutationOperator):
 
