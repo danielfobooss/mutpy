@@ -27,8 +27,6 @@ class ConstantReplacement(MutationOperator):
     SECOND_CONST_STRING = 'python'
 
     def mutate_Num(self, node):
-        with open('results4.txt', 'a') as f:
-                f.write("mutating")
         return ast.Num(n=node.n + 1)
 
     def mutate_Str(self, node):
