@@ -54,8 +54,9 @@ class MutationOperator:
                     new_node = visitor(node)
                     self.visitor = visitor.__name__
                     self.current_node = node
-                    self.fix_node_internals(node, new_node)
-                    ast.fix_missing_locations(new_node)
+                    if new_node is not None:
+                        self.fix_node_internals(node, new_node)
+                        ast.fix_missing_locations(new_node)
                     yield new_node
                 except MutationResign:
                     pass
@@ -83,10 +84,10 @@ class MutationOperator:
         for position, value in enumerate(old_values_copy):
             if isinstance(value, ast.AST):
                 for new_value in self.visit(value):
-                    if not isinstance(new_value, ast.AST):
-                        old_value[position:position + 1] = new_value
-                    elif value is None:
+                    if new_value is None:
                         del old_value[position]
+                    elif not isinstance(new_value, ast.AST):
+                        old_value[position:position + 1] = new_value
                     else:
                         old_value[position] = new_value
 

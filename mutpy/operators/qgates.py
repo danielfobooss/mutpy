@@ -1,6 +1,7 @@
 import ast
 from inspect import getmembers, isfunction, signature
 from mutpy.operators.base import MutationResign, MutationOperator
+from qiskit import QuantumCircuit
 # https://qiskit.org/documentation/apidoc/circuit_library.html
 # https://github.com/Qiskit/qiskit-terra/blob/master/qiskit/circuit/quantumcircuit.py
 # https://quantumai.google/cirq/gates     
