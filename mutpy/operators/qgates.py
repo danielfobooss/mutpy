@@ -6,6 +6,50 @@ from qiskit import QuantumCircuit
 # https://github.com/Qiskit/qiskit-terra/blob/master/qiskit/circuit/quantumcircuit.py
 # https://quantumai.google/cirq/gates     
 
+class QuantumGateDeletion(MutationOperator):
+
+    def should_mutate_Attribute(self, node):
+        return isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Attribute) and node.value.func.attr in gates_set
+
+    def should_mutate_Name(self, node):
+        return isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id in gates_set
+
+    def mutate_Expr(self, node):
+
+        global gates_set 
+        gates_set = self.equivalent_gates()
+        
+        if self.should_mutate_Name(node):
+            return None
+        if self.should_mutate_Attribute(node):
+            return None
+        raise MutationResign()
+
+    def compare_gate_functions(self, f1, f2, discard_named_args=True):
+        if not discard_named_args:
+            return signature(f1) == signature(f2)
+        return [arg for arg in signature(f1).parameters.values() if arg.default is arg.empty] == \
+            [arg for arg in signature(f2).parameters.values() if arg.default is arg.empty]
+
+    def equivalent_gates(self, discard_named_args=True):
+        existing_gate_names = ['ch', 'cp', 'cx', 'cy', 'cz', 'crx', 'cry', 'crz', 'ccx', 'cswap',
+                                'csx', 'cu', 'cu1', 'cu3', 'dcx', 'h', 'i', 'id', 'iden', 'iswap',
+                                'ms', 'p', 'r', 'rx', 'rxx', 'ry', 'ryy', 'rz', 'rzx', 'rzz', 's',
+                                'sdg', 'swap', 'sx', 'x', 'y', 'z', 't', 'tdg', 'u', 'u1', 'u2',
+                                'u3']
+        gate_functions = [o for o in getmembers(QuantumCircuit) if isfunction(o[1]) and o[0] in existing_gate_names]
+        gate_to_gate = { g: set() for g in existing_gate_names }
+        done = set()
+        for gate, func in gate_functions:
+            for gate_, func_ in gate_functions:
+                if gate == gate_:
+                    continue
+                if self.compare_gate_functions(func, func_, discard_named_args):
+                    gate_to_gate[gate].add(gate_)
+                    gate_to_gate[gate_].add(gate_)
+                    done.add(gate)
+                    done.add(gate_)
+        return gate_to_gate
 
 class QuantumGateReplacement(MutationOperator):
 
